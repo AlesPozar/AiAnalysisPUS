@@ -7,8 +7,11 @@
           http://www.liquibase.org/xml/ns/dbchangelog
           https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
+
+    <!-- Creates analysis table -->
     <changeSet id="001-create-analysis-table" author="ales">
         <createTable tableName="analysis">
+            <!-- BIGSERIAL se uporabla da mamo se avtomaticno generiranej zravn -->
             <column name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
@@ -27,6 +30,46 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+    </changeSet>
+
+    <!-- question table -->
+    <changeSet id="002-create-question-table" author="ales">
+        <!-- table definition -->
+        <createTable tableName="question">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="analysis_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="question_text" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="position" type="INT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- foreign key definition -->
+        <addForeignKeyConstraint
+                baseTableName="question"
+                baseColumnNames="analysis_id"
+                referencedTableName="analysis"
+                referencedColumnNames="id"
+                constraintName="fk_question_analysis"/>
+
+        <!-- basicaly pove da na tabeli question naj bo vsak par (analysis_id, position) drugacen -->
+        <addUniqueConstraint
+                tableName="question"
+                columnNames="analysis_id, position"
+                constraintName="uk_question_analysis_position"/>
     </changeSet>
 
 </databaseChangeLog>
