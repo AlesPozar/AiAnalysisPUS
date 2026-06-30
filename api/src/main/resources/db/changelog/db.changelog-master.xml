@@ -72,4 +72,30 @@
                 constraintName="uk_question_analysis_position"/>
     </changeSet>
 
+    <!-- Session table -->
+    <changeSet id="003-create-analysis-session-table" author="ales">
+        <createTable tableName="analysis_session">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="analysis_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="respondent" type="VARCHAR(255)"/>
+
+            <column name="completed_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="analysis_session"
+                baseColumnNames="analysis_id"
+                referencedTableName="analysis"
+                referencedColumnNames="id"
+                constraintName="fk_analysis_session_analysis"/>
+    </changeSet>
+
 </databaseChangeLog>
