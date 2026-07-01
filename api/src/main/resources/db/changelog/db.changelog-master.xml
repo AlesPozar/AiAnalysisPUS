@@ -98,4 +98,84 @@
                 constraintName="fk_analysis_session_analysis"/>
     </changeSet>
 
+    <!-- question_response table -->
+    <changeSet id="004-create-question-response-table" author="ales">
+        <createTable tableName="question_response">
+
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="session_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="question_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="question_response"
+                baseColumnNames="session_id"
+                referencedTableName="analysis_session"
+                referencedColumnNames="id"
+                constraintName="fk_question_response_session"/>
+
+        <addForeignKeyConstraint
+                baseTableName="question_response"
+                baseColumnNames="question_id"
+                referencedTableName="question"
+                referencedColumnNames="id"
+                constraintName="fk_question_response_question"/>
+
+        <!-- par (session_id, question_id) mora biti drugacen -->
+        <addUniqueConstraint
+                tableName="question_response"
+                columnNames="session_id,question_id"
+                constraintName="uk_question_response_session_question"/>
+    </changeSet>
+
+    <!-- response_message table -->
+    <changeSet id="005-create-response-message-table" author="ales">
+        <createTable tableName="response_message">
+            <column name="id" type="BIGSERIAL">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+
+            <column name="question_response_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="sender" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="message_text" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="position" type="INT">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                baseTableName="response_message"
+                baseColumnNames="question_response_id"
+                referencedTableName="question_response"
+                referencedColumnNames="id"
+                constraintName="fk_response_message_question_response"/>
+
+        <!-- pozicija mora biti drugačna -->
+        <addUniqueConstraint
+                tableName="response_message"
+                columnNames="question_response_id,position"
+                constraintName="uk_response_message_question_response_position"/>
+    </changeSet>
+
 </databaseChangeLog>
