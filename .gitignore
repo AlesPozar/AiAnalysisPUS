@@ -20,3 +20,5 @@ application-local.properties
 
 # Quarkus
 .quarkus/
+
+.env
