@@ -1,0 +1,132 @@
+# 04 – API endpointi
+
+## Osnovno
+
+Swagger UI:
+
+```text
+http://localhost:8080/q/swagger-ui
+```
+
+## Analysis Resource
+
+### GET /analyses
+
+Vrne seznam vseh analiz.
+
+### POST /analyses
+
+Ustvari novo analizo.
+
+```json
+{
+  "title": "Analiza uporabniške izkušnje",
+  "description": "Analiza zadovoljstva uporabnikov z aplikacijo."
+}
+```
+
+### PUT /analyses/{analysisId}
+
+Posodobi obstoječo analizo.
+
+```json
+{
+  "title": "Posodobljen naslov",
+  "description": "Posodobljen opis."
+}
+```
+
+### DELETE /analyses/{analysisId}
+
+Izbriše analizo po ID-ju. Zaradi cascade delete se izbriše vse povezano na analizo
+
+## Question Resource
+
+### GET /analyses/{analysisId}/questions
+
+Vrne vsa vprašanja za določeno analizo.
+
+### POST /analyses/{analysisId}/questions
+
+Ustvari novo vprašanje za analizo.
+
+```json
+{
+  "questionText": "Kaj vam je bilo pri aplikaciji najbolj všeč?",
+  "position": 1
+}
+```
+
+### GET /analyses/{analysisId}/questions/{questionId}
+
+Vrne eno vprašanje po ID-ju, če pripada podani analizi.
+
+### PUT /analyses/{analysisId}/questions/{questionId}
+
+Posodobi vprašanje.
+
+```json
+{
+  "questionText": "Kaj vam je bilo pri uporabi aplikacije najbolj všeč?",
+  "position": 1
+}
+```
+
+### DELETE /analyses/{analysisId}/questions/{questionId}
+
+Izbriše vprašanje. Povezani odgovori in sporočila se izbrišejo prek cascade delete.
+
+## AI Conversation Resource
+
+### POST /analyses/{analysisId}/questions/{questionId}/ai/conversation
+
+Nadaljuje AI-voden pogovor za posamezno glavno vprašanje.
+
+```json
+{
+  "previousResponses": [
+    {
+      "questionId": 1,
+      "summary": "Uporabnik je povedal, da mu je bila všeč enostavna navigacija."
+    }
+  ],
+  "messages": [
+    {
+      "sender": "AI",
+      "messageText": "Kaj vam je bilo pri aplikaciji najbolj všeč?"
+    },
+    {
+      "sender": "USER",
+      "messageText": "Najbolj mi je bila všeč preprosta uporaba."
+    }
+  ]
+}
+```
+
+Možne vrednosti `state` so `FOLLOWUP`, `EXPLANATION`, `NEXT_QUESTION` in `DONE`.
+
+## Analysis Session Resource
+
+### GET /analyses/{analysisId}/sessions
+
+Vrne vse zaključene seje za določeno analizo.
+
+### POST /analyses/{analysisId}/sessions
+
+Ustvari osnovno sejo brez celotnih odgovorov. Endpoint je uporaben predvsem za osnovni CRUD oziroma testiranje.
+
+### POST /analyses/{analysisId}/sessions/full
+
+Shrani celotno zaključeno sejo z vsemi odgovori in sporočili.
+
+### GET /analyses/{analysisId}/sessions/{sessionId}
+
+Vrne osnovne podatke o eni seji.
+
+### GET /analyses/{analysisId}/sessions/{sessionId}/full
+
+Vrne celotno sejo z vprašanji in vsemi sporočili.
+
+### DELETE /analyses/{analysisId}/sessions/{sessionId}
+
+Izbriše določeno sejo. Povezana sporočila in odgovori se izbrišejo prek cascade delete.

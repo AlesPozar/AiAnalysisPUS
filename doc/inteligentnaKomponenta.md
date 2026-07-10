@@ -35,7 +35,3 @@ Na koncu se celoten pogovor pošlje in shrani v bazo.
 ```txt
 POST analyses>/{analysisId}/questions/{questionId}/ai/conversation
 ```
-
-
-## TODO
-- nadaljuj v service za ai, flow/path je ze ucrtan
