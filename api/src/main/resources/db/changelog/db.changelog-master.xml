@@ -178,4 +178,73 @@
                 constraintName="uk_response_message_question_response_position"/>
     </changeSet>
 
+
+
+    <!-- changeset za cascading deletion za poodatkovne tabele, da ne rabim narediti ogromno delete funkcij v repositorijih, ko želim izbriisati neko analizo -->
+    <changeSet id="006-add-cascading-deletion" author="ales">
+        
+        <!-- najporej ozbrisemo stare foreign keye -->
+        <dropForeignKeyConstraint
+                baseTableName="question"
+                constraintName="fk_question_analysis"/>
+
+        <dropForeignKeyConstraint
+                baseTableName="analysis_session"
+                constraintName="fk_analysis_session_analysis"/>
+        
+        <dropForeignKeyConstraint
+            baseTableName="question_response"
+            constraintName="fk_question_response_session"/>
+
+        <dropForeignKeyConstraint
+                baseTableName="question_response"
+                constraintName="fk_question_response_question"/>
+
+        <dropForeignKeyConstraint
+                baseTableName="response_message"
+                constraintName="fk_response_message_question_response"/>
+
+        <!-- posodobimo foreign keye z cascading -->
+        <addForeignKeyConstraint
+                baseTableName="question"
+                baseColumnNames="analysis_id"
+                referencedTableName="analysis"
+                referencedColumnNames="id"
+                constraintName="fk_question_analysis"
+                onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint
+                baseTableName="analysis_session"
+                baseColumnNames="analysis_id"
+                referencedTableName="analysis"
+                referencedColumnNames="id"
+                constraintName="fk_analysis_session_analysis"
+                onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint
+                baseTableName="question_response"
+                baseColumnNames="session_id"
+                referencedTableName="analysis_session"
+                referencedColumnNames="id"
+                constraintName="fk_question_response_session"
+                onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint
+                baseTableName="question_response"
+                baseColumnNames="question_id"
+                referencedTableName="question"
+                referencedColumnNames="id"
+                constraintName="fk_question_response_question"
+                onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint
+                baseTableName="response_message"
+                baseColumnNames="question_response_id"
+                referencedTableName="question_response"
+                referencedColumnNames="id"
+                constraintName="fk_response_message_question_response"
+                onDelete="CASCADE"/>
+
+    </changeSet>
+
 </databaseChangeLog>

@@ -3,6 +3,7 @@ package com.ales.aianalysis.api;
 import com.ales.aianalysis.api.dto.QuestionResponse;
 
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PathParam;
@@ -10,6 +11,7 @@ import jakarta.ws.rs.Produces;
 
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import jakarta.inject.Inject;
 import com.ales.aianalysis.api.dto.CreateQuestionRequest;
 import com.ales.aianalysis.service.QuestionService;
@@ -56,5 +58,12 @@ public class QuestionResource {
         return QuestionResponse.fromEntity(
             questionService.getQuestionByAnalysisIDAndQuestionId(analysisId, questionId)
         );
+    }
+
+    @DELETE
+    @Path("/{questionId}")
+    public Response deleteQuestionByAnalysisIdAndQuestionId(@PathParam("analysisId") Long analysisId, @PathParam("questionId") Long questionId){
+        questionService.deleteQuestion(analysisId, questionId);
+        return Response.noContent().build();
     }
 }

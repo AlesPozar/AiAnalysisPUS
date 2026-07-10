@@ -47,4 +47,8 @@ public class QuestionRepository {
             .setParameter("position", position)
             .getResultStream().findFirst();
     }
+
+    public void delete(Question question) {
+        entityManager.remove(question);
+    }
 }

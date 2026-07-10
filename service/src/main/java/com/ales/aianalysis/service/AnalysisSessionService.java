@@ -111,4 +111,16 @@ public class AnalysisSessionService {
         }
         // itd
     }
+
+    @Transactional
+    public void deleteAnalysisSession(Long analysisId, Long sessionId) {
+        AnalysisSession session = analysisSessionRepository.findById(sessionId)
+                .orElseThrow(() -> new IllegalArgumentException("Analysis session not found"));
+
+        if (!session.getAnalysis().getId().equals(analysisId)) {
+            throw new IllegalArgumentException("Analysis session does not belong to the specified analysis");
+        }
+
+        analysisSessionRepository.delete(session);
+    }
 }

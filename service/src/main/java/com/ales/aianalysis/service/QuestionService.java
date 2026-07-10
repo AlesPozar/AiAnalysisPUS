@@ -50,4 +50,16 @@ public class QuestionService {
 
         return question;
     }
+
+    @Transactional
+    public void deleteQuestion(Long analysisId, Long questionId) {
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new IllegalArgumentException("Question not found"));
+
+        if(!question.getAnalysis().getId().equals(analysisId)) {
+            throw new IllegalArgumentException("Question does not belong to this analysis");
+        }
+
+        questionRepository.delete(question);
+    }
 }

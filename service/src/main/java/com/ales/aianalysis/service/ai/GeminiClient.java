@@ -32,10 +32,43 @@ public class GeminiClient {
     @ConfigProperty(name = "gemini.model")
     String model;
 
+    //za fallback setup, ker tisti gemini-3.1-flash je velikokrat nedostopen, sicer pa zato malo slbše deluje
+    @ConfigProperty(name = "gemini.fallback-model", defaultValue = "gemini-3.1-flash-lite")
+    String fallbackModel;
+
 
     public String generateText(String prompt){
         try{
-            String url = "https://generativelanguage.googleapis.com/v1beta/models/" + model + ":generateContent";
+            return generateTextWithModel(prompt, model);
+        }
+        catch (GeminiApiException primaryException) {
+            if (!isRetryable(primaryException.statusCode)) {
+                throw new RuntimeException(
+                        "Error occurred while generating text with Gemini API: " + primaryException.getMessage(),
+                        primaryException
+                );
+            }
+
+            try {
+                return generateTextWithModel(prompt, fallbackModel);
+            } catch (Exception fallbackException) {
+                throw new RuntimeException(
+                        "Primary Gemini model " + model + " failed: " + primaryException.getMessage()
+                                + "; fallback model " + fallbackModel + " failed: " + fallbackException.getMessage(),
+                        fallbackException
+                );
+            }
+        }
+        catch (Exception e) {
+            throw new RuntimeException(
+                    "Error occurred while generating text with Gemini API: " + e.getMessage(),
+                    e
+            );
+        }
+    }
+
+    private String generateTextWithModel(String prompt, String modelName) throws Exception {
+            String url = "https://generativelanguage.googleapis.com/v1beta/models/" + modelName + ":generateContent";
 
             /*
             {
@@ -74,14 +107,21 @@ public class GeminiClient {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() < 200 || response.statusCode() >= 300) {
-                throw new IllegalStateException(
-                        "Gemini API error. Status: " + response.statusCode() + ", body: " + response.body()
-                );
+                throw new GeminiApiException(response.statusCode(), response.body());
             }
             return extractTextFromResponse(response.body());
-        }
-        catch (Exception e) {
-            throw new RuntimeException("Error occurred while generating text with Gemini API", e);
+    }
+
+    private boolean isRetryable(int statusCode) {
+        return statusCode == 429 || statusCode == 500 || statusCode == 503 || statusCode == 504;
+    }
+
+    private static class GeminiApiException extends IllegalStateException {
+        final int statusCode;
+
+        GeminiApiException(int statusCode, String responseBody) {
+            super("Gemini API error. Status: " + statusCode + ", body: " + responseBody);
+            this.statusCode = statusCode;
         }
     }
 

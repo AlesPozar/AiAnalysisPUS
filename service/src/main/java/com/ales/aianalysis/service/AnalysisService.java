@@ -32,5 +32,16 @@ public class AnalysisService {
     public List<Analysis> getAllAnalyses() {
         return analysisRepository.findAll();
     }
+
+    @Transactional
+    public void deleteAnalysis(Long id) {
+        //Krajse vndar API caller ne ve ali je bilo res kaj izbrisano
+        //analysisRepository.findById(id).ifPresent(analysisRepository::delete);
+
+        Analysis analysis = analysisRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Analysis not found"));
+
+        analysisRepository.delete(analysis);
+    }
     
 }

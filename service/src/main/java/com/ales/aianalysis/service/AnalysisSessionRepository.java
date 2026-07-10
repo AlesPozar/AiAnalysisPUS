@@ -27,4 +27,8 @@ public class AnalysisSessionRepository {
                 .setParameter("analysisId", analysisId)
                 .getResultList();
     }
+
+    public void delete(AnalysisSession analysisSession) {
+        entityManager.remove(analysisSession);
+    }
 }

@@ -40,5 +40,9 @@ public class AnalysisRepository {
                 .getResultStream()
                 .findFirst();
     }
+
+    public void delete(Analysis analysis) {
+        entityManager.remove(analysis);
+    }
     
 }
