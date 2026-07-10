@@ -4,6 +4,7 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.PathParam;
@@ -47,6 +48,14 @@ public class AnalysisResource {
         analysisService.deleteAnalysis(id);
         // vrne 204 No Content, da pove da je bil delete uspešen, nekaj podobnega sem deleal v Spring Bootu
         return Response.noContent().build();
+    }
+
+    @PUT
+    @Path("/{analysisId}")
+    public AnalysisResponse updateAnalysisById(@PathParam("analysisId") Long id, CreateAnalysisRequest request) {
+        return AnalysisResponse.fromEntity(
+            analysisService.updateAnalysis(id, request.title, request.description)
+        );
     }
     
 }

@@ -8,13 +8,15 @@ import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
-
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.inject.Inject;
+
 import com.ales.aianalysis.api.dto.CreateQuestionRequest;
 import com.ales.aianalysis.service.QuestionService;
+import com.ales.aianalysis.api.dto.UpdateQuestionRequest;
 
 import java.util.List;
 
@@ -65,5 +67,13 @@ public class QuestionResource {
     public Response deleteQuestionByAnalysisIdAndQuestionId(@PathParam("analysisId") Long analysisId, @PathParam("questionId") Long questionId){
         questionService.deleteQuestion(analysisId, questionId);
         return Response.noContent().build();
+    }
+
+    @PUT
+    @Path("/{questionId}")
+    public QuestionResponse updateQuestionByAnalysisIdAndQuestionId(@PathParam("analysisId") Long analysisId, @PathParam("questionId") Long questionId, UpdateQuestionRequest request){
+        return QuestionResponse.fromEntity(
+            questionService.updateQuestion(analysisId, questionId, request.questionText, request.position)
+        );
     }
 }

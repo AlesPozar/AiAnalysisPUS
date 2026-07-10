@@ -43,5 +43,16 @@ public class AnalysisService {
 
         analysisRepository.delete(analysis);
     }
+
+    @Transactional
+    public Analysis updateAnalysis(Long id, String title, String description) {
+        Analysis analysis = analysisRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Analysis not found"));
+
+        analysis.setTitle(title);
+        analysis.setDescription(description);
+
+        return analysis;
+    }
     
 }

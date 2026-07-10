@@ -62,4 +62,23 @@ public class QuestionService {
 
         questionRepository.delete(question);
     }
+
+    @Transactional
+    public Question updateQuestion(Long analysisId, Long questionId, String questionText, Integer position){
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new IllegalArgumentException("Question not found"));
+
+        if(!question.getAnalysis().getId().equals(analysisId)) {
+            throw new IllegalArgumentException("Question does not belong to this analysis");
+        }
+
+        if(!question.getPosition().equals(position) && questionRepository.findByAnalysisIdAndPosition(analysisId, position).isPresent()){
+            throw new IllegalArgumentException("Question position already exists for this analysis");
+        }
+
+        question.setQuestionText(questionText);
+        question.setPosition(position);
+
+        return question;
+    }
 }
